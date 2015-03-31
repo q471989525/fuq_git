@@ -27,10 +27,11 @@ public class 刷票 {
                     while (true) {
                         try {
                             Thread.sleep(500);
-                        } catch (InterruptedException ex) {
+                                 String httpGet = httpGet("http://a.mmvtc.cn/shelian/Article/SubmitVote?X-Requested-With=XMLHttpRequest&item50=221&voteid=35"+ "&r=" + Math.round(Math.random() * 99999), "utf-8", getRIP());
+                        } catch ( Exception ex) {
                             ex.printStackTrace();
                         }                       //http://kn2013.hunantv.com/klns.php?itemid=2825&callback=jQuery17203604365031891007_1377856895921&_=1377856995477
-                        String httpGet = httpGet("http://a.mmvtc.cn/shelian/Article/SubmitVote?X-Requested-With=XMLHttpRequest&item50=221&voteid=35"+ "&r=" + Math.round(Math.random() * 99999), "utf-8", getRIP());
+                       
                     }
                 }
             });
@@ -44,7 +45,7 @@ public class 刷票 {
      * @param url
      * @return
      */
-    public static String httpGet(String url, String encoding, String ip) {
+    public static String httpGet(String url, String encoding, String ip) throws IOException {
 
         HttpGet httpRequest = new HttpGet(url);
         httpRequest.setHeader("Content-Encoding", encoding);
