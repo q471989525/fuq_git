@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+     <!-- 业务层延迟加载拦截器 拦截hibernate需要延长加载的业务逻辑类实现session开启-->
+    <bean id="hibernateInterceptor" class="org.springframework.orm.hibernate3.HibernateInterceptor">
+        <property name="sessionFactory">
+            <ref bean="sessionFactory"/>
+        </property>
+    </bean>
+    <!--配置拦截器代理-->
+    <bean id="proxyPaperOpe" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <!--需要代理的接口-->
+        <property name="proxyInterfaces">
+            <value>com.pangen.struct.service.viewope.PaperOpeInterface</value>
+        </property>
+        <!--需要代理的接口实现-->
+        <property name="target">
+            <ref bean="paperOpe"/>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <!--拦截器Bean-->
+                <value>hibernateInterceptor</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!--dao-->
+    <bean id="hibernateDaoSupport" class="org.springframework.orm.hibernate3.support.HibernateDaoSupport" abstract="true">
+        
+    </bean>
+    <bean id="seedDAOImpl" class="com.pangen.struct.dao.SeedDAOImpl">
+        <property name="sessionFactory">
+            <ref local="sessionFactory"/>
+        </property>
+    </bean>
+    <!--dao-->
+       
+    <!--service-->
+
+    <!--抽象类得配置-->
+    <bean id="webPageOperateAbs" class="com.pangen.struct.service.extract.WebPageOperateAbs" abstract="true" >
+        <property name="seedDao">
+            <ref local="seedDAOImpl"/>
+        </property>
+        <property name="sxdData">
+            <ref local="seedXpathData"/>
+        </property>
+    </bean>
+
+<!--需要在类初始化前加载一些参数使用 init-method="init" 在类中创建 init方法-->
+    <bean id="softwareWebPageOperate" class="com.pangen.struct.service.extract.SoftwareWebPageOperate" parent="webPageOperateAbs" init-method="init">
+        <property name="softDao">
+            <ref local="softWareDaoImpl"/>
+        </property>
+        <property name="wtDao">
+            <ref local="wordTypeDaoImpl"/>
+        </property>
+    </bean>
+
+    <!--配置当前类得父类  parent=""-->
+    <bean id="getAcademicJournal" class="com.pangen.struct.service.process.academic.GetAcademicJournal" parent="getAcademicData">
+        <property name="ajdao">
+            <ref local="academiJournalaboutcDAOImpl"/>
+        </property>
+    </bean>
+    <!--action-->
+
+    <!--action-->
+    <bean name="/upload" class="com.pangen.struct.view.action.UploadAction">
+        <property name="pxml"  ref="parsePaperXML"/>
+        <property name = "uploadOpe">
+            <ref bean = "uploadOpe" />
+        </property>
+    </bean>
+    <!--action-->
+
+
+<!--    事务管理-->
+<!--    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+       <property name="dataSource">
+          <ref local="dataSource"/>
+       </property>
+       <property name="sessionFactory">
+          <ref local="sessionFactory"/>
+       </property>
+    </bean>-->
+
+<!--    需要事务处理的时候使用该bean-->
+<!--    <bean id="articleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="target" ref="asi"></property>
+       <property name="transactionManager" ref="transactionManager"/>
+       <property name="proxyInterfaces">
+          <list>
+             <value>com.myapp.service.ArticleServiceInterface</value>
+          </list>
+       </property>
+       <property name="transactionAttributes">
+          <props>
+             默认在��现受检异常时不回滚 delArticle
+             <prop key="publish">PROPAGATION_REQUIRED,-Exception</prop>
+             <prop key="delArticle">PROPAGATION_REQUIRED,-Exception</prop>
+          </props>
+       </property>
+    </bean>
+-->
+    <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          p:driverClassName="com.mysql.jdbc.Driver"
+          p:url="jdbc:mysql://192.168.2.201:3306/struct_data"
+          p:username="root"
+          p:password="root123" />
+    <!--使用jndi-->
+<!--    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:comp/env/jdbc/test</value>
+        </property>
+    </bean>-->
+
+    <!-- ADD PERSISTENCE SUPPORT HERE (jpa, hibernate, etc) -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource">
+            <ref local="dataSource"/>
+        </property>
+        <property name="mappingResources">
+            <list>
+                <value>Seedxpath.hbm.xml</value>
+                <value>Seed.hbm.xml</value>
+                <value>Softwareinfo.hbm.xml</value>
+<!--                <value>userinfo.hbm.xml</value>-->
+<!--                <value>administratorinfo.hbm.xml</value>-->
+<!--                <value>computerinfo.hbm.xml</value>-->
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+            </props>
+        </property>
+    </bean>
+</beans>

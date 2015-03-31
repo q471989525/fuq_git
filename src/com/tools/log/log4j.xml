@@ -1,0 +1,128 @@
+<!--log4j配置文件，代替log4j.properties 文件，可以实现不同级别日志打印到不同文件中-->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%d{yyyy/MM/dd HH:mm:ss.sss} [%-5p] %c - %m%n"/>
+        </layout>
+    </appender>
+
+<!--    <appender name="traceLog4Debug" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="logs/traceLog4Debug.log"/>
+        <param name="maxFileSize" value="2000KB"/>
+        <param name="maxBackupIndex" value="20"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%d{yyyy/MM/dd HH:mm:ss.sss} [%-5p] %c - %m%n"/>
+        </layout>
+    </appender>-->
+
+<!--打印debug日志 -->
+<!--org.apache.log4j.DailyRollingFileAppender 按天分割日志-->
+    <appender name="debugLog" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="./logs/debug.log"/>
+        <param name="maxFileSize" value="102400kb"/>
+        <param name="maxBackupIndex" value="10"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%d{yyyy/MM/dd HH:mm:ss.sss} [%-5p] %c - %m%n"/>
+        </layout>
+<!--        filter作用？  配置LevelMax与LevelMin限定输出到文件的日志级别-->
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMax" value="DEBUG" />
+            <param name="LevelMin" value="DEBUG" />
+        </filter>
+        
+    </appender>
+
+<!--打印info日志-->
+    <appender name="infoLog" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="./logs/info.log"/>
+        <param name="maxFileSize" value="102400kb"/>
+        <param name="maxBackupIndex" value="30"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%d{yyyy/MM/dd HH:mm:ss.sss} [%-5p] %c - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMax" value="INFO" />
+            <param name="LevelMin" value="INFO" />
+        </filter>
+    </appender>
+
+<!--    <appender name="warnLog" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="C:/warn.log"/>
+        <param name="maxFileSize" value="102400kb"/>
+        <param name="maxBackupIndex" value="10"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%d{yyyy/MM/dd HH:mm:ss.sss} [%-5p] %c - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMax" value="WARN" />
+            <param name="LevelMin" value="WARN" />
+        </filter>
+    </appender>-->
+
+<!--打印错误日志-->
+    <appender name="errorLog" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="./logs/error.log"/>
+        <param name="maxFileSize" value="102400kb"/>
+        <param name="maxBackupIndex" value="30"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%d{yyyy/MM/dd HH:mm:ss.sss} [%-5p] %c - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMax" value="ERROR" />
+            <param name="LevelMin" value="ERROR" />
+        </filter>
+    </appender>
+
+
+
+<!--  打印全部日志  <root>
+        <level value="ALL"/>
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="traceLog4Debug"/>
+
+        <appender-ref ref="debugLog"/>
+        <appender-ref ref="infoLog"/>
+        <appender-ref ref="warnLog"/>
+        <appender-ref ref="errorLog"/>
+    </root>-->
+    <!-- 记录该包下所有日志 -->
+    <logger name="com">
+        <level value="ALL"/>
+<!--        <appender-ref ref="stdout"/>
+        <appender-ref ref="traceLog4Debug"/>
+-->
+        <appender-ref ref="debugLog"/>
+        <appender-ref ref="infoLog"/>
+<!--        <appender-ref ref="warnLog"/>-->
+        <appender-ref ref="errorLog"/>
+    </logger>
+
+
+<!--打印指定包下错误日志到指定文件中-->
+<!--    <logger name="org.hibernate.SQL">
+        <level value="DEBUG"/>
+        <appender-ref ref="traceLog4Debug"/>
+        <appender-ref ref="stdout"/>
+    </logger>-->
+
+<!--    <logger name="org.hibernate">
+        <level value="error"/>
+        <appender-ref ref="traceLog4Debug"/>
+        <appender-ref ref="stdout"/>
+    </logger>-->
+
+<!--    <logger name="org.springframework">
+        <level value="error"/>
+        <appender-ref ref="traceLog4Debug"/>
+        <appender-ref ref="stdout"/>
+    </logger>-->
+</log4j:configuration>

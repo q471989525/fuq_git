@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2011-11-23 10:17:07 by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class catalog="struct_data" name="com.pangen.struct.bean.Paper" table="paper">
+        <id name="id" type="java.lang.Integer" unsaved-value="null">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+    <!--        <many-to-one cascade="save-update" class="com.pangen.struct.bean.Journalabout" fetch="select" lazy="false" name="journalabout">
+            <column name="journalId" not-null="true">
+                <comment>ÆÚ¿¯±íÍâ¼ü</comment>
+            </column>
+        </many-to-one>-->
+       
+    
+        <property name="page" type="string">
+            <column length="60" name="page">
+                <comment>注释</comment>
+            </column>
+        </property>
+        <!--batch-size="20" 延迟加载Set时一次读取20条  inverse="true" 由对方维护关系 fetch 抓取方式 join可由HQL中重载-->
+        <set cascade="save-update" inverse="true" lazy="true" name="paperAuthors" fetch="select" table="paper_author" batch-size="20">
+            <key>
+                <column name="paperId" not-null="true">
+                </column>
+            </key>
+            <many-to-many class="com.pangen.struct.bean.Author" column="authorId" lazy="proxy"/>
+        </set>
+
+    </class>
+</hibernate-mapping>

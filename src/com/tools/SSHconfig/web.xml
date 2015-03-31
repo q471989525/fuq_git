@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <!--加载配置文件，多个配置文件用,隔开,或者在struts的plug-in处创建加载,创建ApplicationContext-->
+    <!--<context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+-->
+<!--OpenSessionInViewFilter 过滤器 用于在view使用延长加载时打开session-->
+<filter>
+    <filter-name>hibernateFilter</filter-name>  
+    <filter-class>  
+        org.springframework.orm.hibernate3.support.OpenSessionInViewFilter  
+    </filter-class>  
+    <init-param>  
+        <param-name>flushMode</param-name>  
+        <param-value>AUTO</param-value>  
+    </init-param>  
+</filter>  
+
+<filter-mapping>
+    <filter-name>hibernateFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+<listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
+<servlet>
+    <servlet-name>action</servlet-name>
+    <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+    <init-param>
+        <param-name>config</param-name>
+        <param-value>/WEB-INF/struts-config.xml</param-value>
+    </init-param>
+    <init-param>
+        <param-name>debug</param-name>
+        <param-value>2</param-value>
+    </init-param>
+    <init-param>
+        <param-name>detail</param-name>
+        <param-value>2</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+</servlet>
+<servlet-mapping>
+    <servlet-name>action</servlet-name>
+    <url-pattern>*.do</url-pattern>
+</servlet-mapping>
+<session-config>
+    <session-timeout>
+            30
+    </session-timeout>
+</session-config>
+<welcome-file-list>
+    <welcome-file>index_new.jsp</welcome-file>
+</welcome-file-list>
+</web-app>
